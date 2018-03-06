@@ -24,7 +24,7 @@ class MXNetModelTest(unittest.TestCase):
         os.makedirs(self.bucket_path)
         os.makedirs(self.model_dir)
         
-        hyperparameters = {'learningRate': '0.01', 'epochs': 1}
+        hyperparameters = {'learningRate': '0.01', 'epochs': 10}
         num_gpus = 1
         num_cpus = 0
         kwargs = {'key': 'value'}
