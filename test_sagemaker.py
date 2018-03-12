@@ -6,8 +6,8 @@ import inspect
 
 import mxnet as mx
 
-import model_cifar as model
-import model_cifar_io as io
+import model_mnist as model
+import model_mnist_io as io
 
 # import example_model as model
 
@@ -26,19 +26,20 @@ class MXNetModelTest(unittest.TestCase):
         os.makedirs(self.bucket_path)
         os.makedirs(self.model_dir)
         
-        if 'train' in dir(model):
-            hyperparameters = {'learningRate': '0.01', 'epochs': 1}
-            num_gpus = 1
-            num_cpus = 0
-            kwargs = {'key': 'value'}
-            
-            self.model = model.train(hyperparameters=hyperparameters,
-                                        channel_input_dirs=self.channel_input_dirs,
-                                        output_data_dir=self.output_data_dir,
-                                        model_dir=self.model_dir,
-                                        num_gpus=num_gpus,
-                                        num_cpus=num_cpus,
-                                        **kwargs)
+        hyperparameters = {'learningRate': '0.01', 'epochs': 1}
+        num_gpus = 0
+        num_cpus = 1
+        hosts = ['cpu']
+        kwargs = {'key': 'value'}
+        
+        self.model = model.train(hyperparameters=hyperparameters,
+                                    channel_input_dirs=self.channel_input_dirs,
+                                    output_data_dir=self.output_data_dir,
+                                    model_dir=self.model_dir,
+                                    num_gpus=num_gpus,
+                                    num_cpus=num_cpus,
+                                    hosts=hosts,
+                                    **kwargs)
     
     @classmethod
     def tearDownClass(self):
@@ -112,6 +113,6 @@ class MXNetModelTest(unittest.TestCase):
 
         Test input_fn function.
         """
-        if 'input_fn' in dir(model):
-            self.assertTrue('model_fn' in dir(model), 'Currently requires model_fn to test transform_fn')
-            net = model.model_fn(self.model_dir)
+        # if 'input_fn' in dir(model):
+        #     self.assertTrue('model_fn' in dir(model), 'Currently requires model_fn to test transform_fn')
+        #     net = model.model_fn(self.model_dir)
