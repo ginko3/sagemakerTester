@@ -1,13 +1,12 @@
-import json
-import time
-import os
-import logging
+from __future__ import print_function
 
+import logging
 import mxnet as mx
 from mxnet import gluon, autograd
 from mxnet.gluon import nn
 import numpy as np
-
+import json
+import time
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -17,13 +16,13 @@ logging.basicConfig(level=logging.DEBUG)
 # ------------------------------------------------------------ #
 
 
-def train(channel_input_dirs, hyperparameters, num_gpus, hosts=[""], **kwargs):
+def train(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs):
     # SageMaker passes num_cpus, num_gpus and other args we can use to tailor training to
     # the current container environment, but here we just use simple cpu context.
     ctx = mx.cpu()
 
     # retrieve the hyperparameters we set in notebook (with some defaults)
-    batch_size = hyperparameters.get('batch_size', 32)
+    batch_size = hyperparameters.get('batch_size', 100)
     epochs = hyperparameters.get('epochs', 10)
     learning_rate = hyperparameters.get('learning_rate', 0.1)
     momentum = hyperparameters.get('momentum', 0.9)
@@ -42,15 +41,14 @@ def train(channel_input_dirs, hyperparameters, num_gpus, hosts=[""], **kwargs):
     # Collect all parameters from net and its children, then initialize them.
     net.initialize(mx.init.Xavier(magnitude=2.24), ctx=ctx)
     # Trainer is for updating parameters with gradient.
-
+    
     if len(hosts) == 1:
         kvstore = 'device' if num_gpus > 0 else 'local'
     else:
         kvstore = 'dist_device_sync' if num_gpus > 0 else 'dist_sync'
 
     trainer = gluon.Trainer(net.collect_params(), 'sgd',
-                            {'learning_rate': learning_rate, 'momentum': momentum},
-                            kvstore=kvstore)
+                            {'learning_rate': learning_rate, 'momentum': momentum}, kvstore=kvstore)
     metric = mx.metric.Accuracy()
     loss = gluon.loss.SoftmaxCrossEntropyLoss()
 
@@ -79,22 +77,22 @@ def train(channel_input_dirs, hyperparameters, num_gpus, hosts=[""], **kwargs):
                       (epoch, i, name, acc, batch_size / (time.time() - btic)))
 
             btic = time.time()
-            # break
 
         name, acc = metric.get()
         print('[Epoch %d] Training: %s=%f' % (epoch, name, acc))
 
         name, val_acc = test(ctx, net, val_data)
         print('[Epoch %d] Validation: %s=%f' % (epoch, name, val_acc))
-    
+
     return net
 
 
 def save(model, model_dir):
     # save the model
     y = model(mx.sym.var('data'))
-    y.save('{}/model.json'.format(model_dir))
+    y.save('%s/model.json' % model_dir)
     model.collect_params().save('%s/model.params' % model_dir)
+
 
 def define_network():
     net = nn.Sequential()
@@ -143,14 +141,13 @@ def model_fn(model_dir):
     :param: model_dir The directory where model files are stored.
     :return: a model (in this case a Gluon network)
     """
-    symbol = mx.sym.load('{}/model.json'.format(model_dir))
+    symbol = mx.sym.load('%s/model.json' % model_dir)
     outputs = mx.symbol.softmax(data=symbol, name='softmax_label')
     inputs = mx.sym.var('data')
     param_dict = gluon.ParameterDict('model_')
     net = gluon.SymbolBlock(outputs, inputs, param_dict)
     net.load_params('%s/model.params' % model_dir, ctx=mx.cpu())
     return net
-    
 
 
 def transform_fn(model, input_data, content_type, accept):
