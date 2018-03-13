@@ -16,9 +16,9 @@ class MXNetModelTest(unittest.TestCase):
     
     @classmethod
     def setUpClass(self):
-        
+        # '(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs)'
         self.bucket_path = "bucket"
-        self.channel_input_dirs = {'train': os.path.join(self.bucket_path, 'dataset/train'),
+        self.channel_input_dirs = {'training': os.path.join(self.bucket_path, 'dataset/train'),
                              'eval': os.path.join(self.bucket_path, 'dataset/eval')}
         self.output_data_dir = os.path.join(self.bucket_path, 'data')
         self.model_dir = os.path.join(self.bucket_path, 'model')
@@ -52,19 +52,19 @@ class MXNetModelTest(unittest.TestCase):
       
     def test_1_signature(self):
         if 'save' in dir(model):
-            self.assertEqual(inspect.getargspec(model.save).args, ["model", "model_dir"])
+            self.assertEqual(str(inspect.signature(model.save)), '(model, model_dir)')
         
         if 'model_fn' in dir(model):
-             self.assertEqual(inspect.getargspec(model.model_fn).args, ["model_dir"])
+            self.assertEqual(str(inspect.signature(model.model_fn)), '(model_dir)')
         if 'transform_fn' in dir(model):
-            self.assertEqual(inspect.getargspec(model.transform_fn).args, ["model", "input_data", "content_type", "accept"])
+            self.assertEqual(str(inspect.signature(model.transform_fn)), '(model, input_data, content_type, accept)')
             
         if 'input_fn' in dir(model):
-            self.assertEqual(inspect.getargspec(model.input_fn).args, ["input_data", "content_type"])
+            self.assertEqual(str(inspect.signature(model.input_fn)), '(input_data, content_type)')
         if 'predict_fn' in dir(model):
-            self.assertEqual(inspect.getargspec(model.predict_fn).args, ["block", "array"])
+            self.assertEqual(str(inspect.signature(model.predict_fn)), '(block, array)')
         if 'output_fn' in dir(model):
-            self.assertEqual(inspect.getargspec(model.output_fn).args, ["ndarray", "accept"])
+            self.assertEqual(str(inspect.signature(model.output_fn)), '(ndarray, accept)')
      
      
     # ---------------------------------------------------------------------------- #
@@ -99,8 +99,11 @@ class MXNetModelTest(unittest.TestCase):
                                                         input_data=io.input_data,
                                                         content_type=io.content_type,
                                                         accept=io.accept)
-            self.assertEqual(response_body, io.response_body)
             self.assertEqual(accept, io.accept)
+            if 'response_body' in dir(io):
+                self.assertEqual(response_body, io.response_body)
+            else:
+                print("\nResponse: ", response_body)    
             
 
     # ---------------------------------------------------------------------------- #
