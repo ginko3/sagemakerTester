@@ -1,2 +1,8 @@
 # Pycache
 *.pyc
+
+# Archives
+*.gz
+
+# Jupyter checkpoints
+.ipynb_checkpoints
