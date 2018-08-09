@@ -9,5 +9,10 @@
     "hosts": ["cpu"],
     "kwargs": {
         "key": "value"
+    },
+
+    "dataset": {
+        "train": "dataset/train",
+        "eval": "dataset/eval"
     }
 }
