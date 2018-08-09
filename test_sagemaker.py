@@ -13,7 +13,7 @@ import model_mnist_io as io
 
 class MXNetModelTest(unittest.TestCase):
     """Testcase to check a mxnet model before handing it to sagemaker."""
-    
+
     @classmethod
     def setUpClass(self):
         # '(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs)'
@@ -22,7 +22,7 @@ class MXNetModelTest(unittest.TestCase):
                              'eval': os.path.join(self.bucket_path, 'dataset/eval')}
         self.output_data_dir = os.path.join(self.bucket_path, 'data')
         self.model_dir = os.path.join(self.bucket_path, 'model')
-        
+
         os.makedirs(self.bucket_path)
         os.makedirs(self.model_dir)
         
@@ -40,33 +40,33 @@ class MXNetModelTest(unittest.TestCase):
                                     num_cpus=num_cpus,
                                     hosts=hosts,
                                     **kwargs)
-    
+
     @classmethod
     def tearDownClass(self):
         shutil.rmtree('bucket')
         pass
-    
+
     # ---------------------------------------------------------------------------- #
     # Test signatures                                                           #
     # ---------------------------------------------------------------------------- #
-      
+
     def test_1_signature(self):
         if 'save' in dir(model):
             self.assertEqual(str(inspect.signature(model.save)), '(model, model_dir)')
-        
+
         if 'model_fn' in dir(model):
             self.assertEqual(str(inspect.signature(model.model_fn)), '(model_dir)')
         if 'transform_fn' in dir(model):
             self.assertEqual(str(inspect.signature(model.transform_fn)), '(model, input_data, content_type, accept)')
-            
+
         if 'input_fn' in dir(model):
             self.assertEqual(str(inspect.signature(model.input_fn)), '(input_data, content_type)')
         if 'predict_fn' in dir(model):
             self.assertEqual(str(inspect.signature(model.predict_fn)), '(block, array)')
         if 'output_fn' in dir(model):
             self.assertEqual(str(inspect.signature(model.output_fn)), '(ndarray, accept)')
-     
-     
+
+
     # ---------------------------------------------------------------------------- #
     # Training functions                                                           #
     # ---------------------------------------------------------------------------- #
@@ -74,7 +74,7 @@ class MXNetModelTest(unittest.TestCase):
     def test_2_save(self):
         """
         [Optional]
-        
+
         Test save function.
         """
         if 'save' in dir(model):
@@ -103,8 +103,8 @@ class MXNetModelTest(unittest.TestCase):
             if 'response_body' in dir(io):
                 self.assertEqual(response_body, io.response_body)
             else:
-                print("\nResponse: ", response_body)    
-            
+                print("\nResponse: ", response_body)
+
 
     # ---------------------------------------------------------------------------- #
     # Request handlers for Gluon models                                            #

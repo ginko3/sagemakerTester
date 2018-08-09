@@ -41,7 +41,7 @@ def train(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs):
     # Collect all parameters from net and its children, then initialize them.
     net.initialize(mx.init.Xavier(magnitude=2.24), ctx=ctx)
     # Trainer is for updating parameters with gradient.
-    
+
     if len(hosts) == 1:
         kvstore = 'device' if num_gpus > 0 else 'local'
     else:
