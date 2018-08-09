@@ -16,7 +16,16 @@ class MXNetModelTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        # '(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs)'
+        # Load parameters
+        with open('config.json') as jfile:
+            config = json.load(jfile)
+
+        hyperparameters = config['hyperparameters']
+        num_gpus = config['num_gpus']
+        num_cpus = config['num_cpus']
+        hosts = config['hosts']
+        kwargs = config['kwargs']
+
         self.bucket_path = "bucket"
         self.channel_input_dirs = {'train': os.path.join(self.bucket_path, 'dataset/train'),
                              'eval': os.path.join(self.bucket_path, 'dataset/eval')}
@@ -25,13 +34,7 @@ class MXNetModelTest(unittest.TestCase):
 
         os.makedirs(self.bucket_path)
         os.makedirs(self.model_dir)
-        
-        hyperparameters = {'learningRate': '0.01', 'epochs': 1}
-        num_gpus = 0
-        num_cpus = 1
-        hosts = ['cpu']
-        kwargs = {'key': 'value'}
-        
+
         self.model = model.train(hyperparameters=hyperparameters,
                                     channel_input_dirs=self.channel_input_dirs,
                                     output_data_dir=self.output_data_dir,

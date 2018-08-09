@@ -1,0 +1,13 @@
+{
+    "hyperparameters": {
+        "learningRate": "0.01",
+        "epochs": 1
+    },
+
+    "num_gpus": 0,
+    "num_cpus": 1,
+    "hosts": ["cpu"],
+    "kwargs": {
+        "key": "value"
+    }
+}
