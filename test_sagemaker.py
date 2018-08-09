@@ -18,7 +18,7 @@ class MXNetModelTest(unittest.TestCase):
     def setUpClass(self):
         # '(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs)'
         self.bucket_path = "bucket"
-        self.channel_input_dirs = {'training': os.path.join(self.bucket_path, 'dataset/train'),
+        self.channel_input_dirs = {'train': os.path.join(self.bucket_path, 'dataset/train'),
                              'eval': os.path.join(self.bucket_path, 'dataset/eval')}
         self.output_data_dir = os.path.join(self.bucket_path, 'data')
         self.model_dir = os.path.join(self.bucket_path, 'model')
