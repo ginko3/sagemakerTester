@@ -1,8 +1,13 @@
-# Pycache
-*.pyc
-
+# === Sagemaker related ===
 # Archives
 *.gz
+
+# Bucket
+bucket
+
+# === Misc ===
+# Pycache
+*.pyc
 
 # Jupyter checkpoints
 .ipynb_checkpoints
