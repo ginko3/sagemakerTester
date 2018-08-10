@@ -31,9 +31,8 @@ def train(channel_input_dirs, hyperparameters, num_gpus, hosts, **kwargs):
     # load training and validation data
     # we use the gluon.data.vision.MNIST class because of its built in mnist pre-processing logic,
     # but point it at the location where SageMaker placed the data files, so it doesn't download them again.
-    training_dir = channel_input_dirs['train']
-    train_data = get_train_data(training_dir + '/train', batch_size)
-    val_data = get_val_data(training_dir + '/test', batch_size)
+    train_data = load_val_data(channel_input_dirs['train'], batch_size)
+    val_data = load_val_data(channel_input_dirs['eval'], batch_size)
 
     # define the network
     net = define_network()
@@ -108,13 +107,13 @@ def input_transformer(data, label):
     return data, label
 
 
-def get_train_data(data_dir, batch_size):
+def load_val_data(data_dir, batch_size):
     return gluon.data.DataLoader(
         gluon.data.vision.MNIST(data_dir, train=True, transform=input_transformer),
         batch_size=batch_size, shuffle=True, last_batch='discard')
 
 
-def get_val_data(data_dir, batch_size):
+def load_val_data(data_dir, batch_size):
     return gluon.data.DataLoader(
         gluon.data.vision.MNIST(data_dir, train=False, transform=input_transformer),
         batch_size=batch_size, shuffle=False)
