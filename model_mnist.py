@@ -145,7 +145,7 @@ def model_fn(model_dir):
     inputs = mx.sym.var('data')
     param_dict = gluon.ParameterDict('model_')
     net = gluon.SymbolBlock(outputs, inputs, param_dict)
-    net.load_params('%s/model.params' % model_dir, ctx=mx.cpu())
+    net.load_parameters('%s/model.params' % model_dir, ctx=mx.cpu())
     return net
 
 
