@@ -47,7 +47,7 @@ class MXNetModelTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        shutil.rmtree('bucket')
+        shutil.rmtree(self.bucket_path)
         pass
 
     # ---------------------------------------------------------------------------- #
