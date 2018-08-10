@@ -33,7 +33,13 @@ class MXNetModelTest(unittest.TestCase):
         self.output_data_dir = os.path.join(self.bucket_path, 'data')
         self.model_dir = os.path.join(self.bucket_path, 'model')
 
-        os.makedirs(self.bucket_path)
+        try:
+            os.makedirs(self.bucket_path)
+        except FileExistsError:
+            print("Removing old bucket at {}.".format(os.path.abspath(self.bucket_path)))
+            shutil.rmtree(self.bucket_path)
+            os.makedirs(self.bucket_path)
+
         os.makedirs(self.model_dir)
 
         self.model = model.train(hyperparameters=hyperparameters,
