@@ -1,15 +1,26 @@
 {
-    "hyperparameters": {
-        "learningRate": "0.01",
-        "epochs": 1
+    "files": {
+        "entry": "model_mnist",
+        "entry_io": "model_mnist_io"
     },
 
+
+    "hyperparameters": {
+        "batch_size": 32,
+        "epochs": 1,
+        "learning_rate": 0.1,
+        "momentum": 0.9,
+        "log_interval": 100
+    },
+
+    "batch_size": 32,
     "num_gpus": 0,
     "num_cpus": 1,
     "hosts": ["cpu"],
     "kwargs": {
         "key": "value"
     },
+
 
     "dataset": {
         "train": "dataset/train",
