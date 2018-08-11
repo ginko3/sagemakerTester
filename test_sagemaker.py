@@ -6,10 +6,11 @@ import inspect
 
 import mxnet as mx
 
-import model_mnist as model
-import model_mnist_io as io
-
-# import example_model as model
+# Import entry and io
+with open('config.json') as jfile:
+    config = json.load(jfile)
+model = __import__(config["files"]['entry'])
+io = __import__(config["files"]['entry_io'])
 
 class MXNetModelTest(unittest.TestCase):
     """Testcase to check a mxnet model before handing it to sagemaker."""
